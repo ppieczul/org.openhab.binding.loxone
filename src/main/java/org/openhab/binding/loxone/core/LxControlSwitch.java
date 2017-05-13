@@ -36,6 +36,15 @@ public class LxControlSwitch extends LxControl {
     public final static String STATE_ACTIVE = "active";
 
     /**
+     * Command string used to set control's state to ON
+     */
+    private final static String CMD_ON = "On";
+    /**
+     * Command string used to set control's state to OFF
+     */
+    private final static String CMD_OFF = "Off";
+
+    /**
      * Create switch control object.
      *
      * @param client
@@ -57,23 +66,26 @@ public class LxControlSwitch extends LxControl {
     }
 
     /**
-     * Operate a Miniserver's switch object.
+     * Set switch to ON.
      * <p>
      * Sends a command to operate the switch.
      *
-     * @param operation
-     *            Operation to perform (CMD_ON or CMD_OFF)
-     * @return
-     *         true is operation succeeded, false is operation is not compatible with control
      * @throws IOException
      *             when something went wrong with communication
      */
-    @Override
-    public boolean operate(String operation) throws IOException {
-        if (operation != LxControl.CMD_ON && operation != LxControl.CMD_OFF) {
-            return false;
-        }
-        socketClient.sendAction(uuid, operation);
-        return true;
+    public void On() throws IOException {
+        socketClient.sendAction(uuid, CMD_ON);
+    }
+
+    /**
+     * Set switch to OFF.
+     * <p>
+     * Sends a command to operate the switch.
+     *
+     * @throws IOException
+     *             when something went wrong with communication
+     */
+    public void Off() throws IOException {
+        socketClient.sendAction(uuid, CMD_OFF);
     }
 }

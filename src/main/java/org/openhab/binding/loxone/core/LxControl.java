@@ -8,7 +8,6 @@
  */
 package org.openhab.binding.loxone.core;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -23,16 +22,6 @@ import java.util.Objects;
  *
  */
 public abstract class LxControl {
-
-    /**
-     * Command string used to set control's state to ON
-     */
-    public final static String CMD_ON = "On";
-    /**
-     * Command string used to set control's state to OFF
-     */
-    public final static String CMD_OFF = "Off";
-
     private String name;
     private LxContainer room;
     private LxCategory category;
@@ -63,21 +52,6 @@ public abstract class LxControl {
         this.uuid = uuid;
         update(name, room, category, states);
     }
-
-    /**
-     * Operate a Miniserver's control object.
-     * <p>
-     * Checks if command is compatible with control and sends it.
-     *
-     * @param operation
-     *            String describing particular operation to perform. It should be obtained from child class
-     *            implementation.
-     * @return
-     *         true is operation succeeded, false is operation is not compatible with control
-     * @throws IOException
-     *             when something went wrong (depends on communication interface)
-     */
-    abstract public boolean operate(String operation) throws IOException;
 
     /**
      * Gets state object of given name, if exists
@@ -118,7 +92,7 @@ public abstract class LxControl {
      * Obtain room that this control belongs to
      *
      * @return
-     *         Control's room
+     *         Control's room or null if no room
      */
     public LxContainer getRoom() {
         return room;
@@ -128,7 +102,7 @@ public abstract class LxControl {
      * Obtain category of this control
      *
      * @return
-     *         Control's category
+     *         Control's category or null if no category
      */
     public LxCategory getCategory() {
         return category;

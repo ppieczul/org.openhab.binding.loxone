@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Loxone Binding
 Bundle-SymbolicName: org.openhab.binding.loxone;singleton:=true
 Bundle-Vendor: openHAB
-Bundle-Version: 2.1.0.qualifier
+Bundle-Version: 2.1.0.1
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
 Import-Package: 

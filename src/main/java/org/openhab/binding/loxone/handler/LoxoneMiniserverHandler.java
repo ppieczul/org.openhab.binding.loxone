@@ -19,6 +19,9 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.smarthome.core.library.types.OnOffType;
+import org.eclipse.smarthome.core.library.types.PercentType;
+import org.eclipse.smarthome.core.library.types.StopMoveType;
+import org.eclipse.smarthome.core.library.types.UpDownType;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -33,7 +36,9 @@ import org.eclipse.smarthome.core.thing.type.ChannelTypeUID;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.loxone.config.LoxoneMiniserverConfig;
+import org.openhab.binding.loxone.core.LxCategory;
 import org.openhab.binding.loxone.core.LxControl;
+import org.openhab.binding.loxone.core.LxControlJalousie;
 import org.openhab.binding.loxone.core.LxControlState;
 import org.openhab.binding.loxone.core.LxControlSwitch;
 import org.openhab.binding.loxone.core.LxServer;
@@ -81,32 +86,50 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
 
         LxControl control = getControlFromChannelUID(channelUID);
         if (control == null) {
-            logger.error("Received command from unknown control.");
+            logger.error("Received command {} from unknown control.", command.toString());
             return;
         }
 
+        logger.debug("Control '{}' received command: {}", control.getName(), command.toString());
+
+        // do not check for compatibility between command and control type here, each control has to do it itself
         try {
-            boolean ret = true;
-
             if (command instanceof RefreshType) {
-
                 updateChannelState(channelUID, control);
+                return;
+            }
 
-            } else if (command instanceof OnOffType) {
-
-                switch ((OnOffType) command) {
-                    case ON:
-                        ret = control.operate(LxControl.CMD_ON);
-                        break;
-                    case OFF:
-                        ret = control.operate(LxControl.CMD_OFF);
-                        break;
+            if (control instanceof LxControlSwitch) {
+                if (command instanceof OnOffType) {
+                    if ((OnOffType) command == OnOffType.ON) {
+                        ((LxControlSwitch) control).On();
+                    } else {
+                        ((LxControlSwitch) control).Off();
+                    }
                 }
+                return;
             }
 
-            if (!ret) {
-                logger.debug("Incompatible operation on control {}", control.getUuid().toString());
+            if (control instanceof LxControlJalousie) {
+
+                LxControlJalousie jalousie = (LxControlJalousie) control;
+                if (command instanceof PercentType) {
+                    // currently no support for moving blinds to given percent
+                    updateChannelState(channelUID, control);
+                } else if (command instanceof UpDownType) {
+                    if ((UpDownType) command == UpDownType.UP) {
+                        jalousie.FullUp();
+                    } else {
+                        jalousie.FullDown();
+                    }
+                } else if (command instanceof StopMoveType) {
+                    if ((StopMoveType) command == StopMoveType.STOP) {
+                        jalousie.Stop();
+                    }
+                }
+                return;
             }
+            logger.debug("Incompatible operation on control {}", control.getUuid().toString());
 
         } catch (IOException e) {
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.COMMUNICATION_ERROR, e.getMessage());
@@ -172,34 +195,45 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
 
         for (LxControl control : server.getControls().values()) {
 
+            Channel channel = null;
+            ChannelTypeUID chTypeId = null;
+            ChannelType channelType = null;
+            ChannelUID channelId = new ChannelUID(getThing().getUID(), control.getUuid().toString());
+
             if (control instanceof LxControlSwitch) {
 
-                ChannelTypeUID chTypeId = new ChannelTypeUID(
-                        getThing().getUID() + ":switch:" + control.getUuid().toString());
-
-                String descr = "Switch for " + control.getName();
+                chTypeId = new ChannelTypeUID(getThing().getUID() + ":switch:" + control.getUuid().toString());
 
                 Set<String> tags = null;
-                switch (control.getCategory().getType()) {
-                    case LIGHTS:
-                        tags = Collections.singleton("Lighting");
-                        break;
-                    default:
-                        break;
+                LxCategory cat = control.getCategory();
+                if (cat != null && cat.getType() == LxCategory.CategoryType.LIGHTS) {
+                    tags = Collections.singleton("Lighting");
                 }
 
-                ChannelType switchChType = new ChannelType(chTypeId, false, "Switch", control.getName(),
+                channelType = new ChannelType(chTypeId, false, "Switch", control.getName(),
                         "Loxone switch for " + control.getName(), control.getCategory().getName(), tags, null, null);
-                factory.addChannelType(switchChType);
-                ChannelUID channelId = new ChannelUID(getThing().getUID(), control.getUuid().toString());
+                channel = ChannelBuilder.create(channelId, "Switch").withType(chTypeId).withLabel(control.getName())
+                        .withDescription("Switch for " + control.getName()).withDefaultTags(tags).build();
+
+            } else if (control instanceof LxControlJalousie) {
+
+                chTypeId = new ChannelTypeUID(getThing().getUID() + ":rollershutter:" + control.getUuid().toString());
+                channelType = new ChannelType(chTypeId, false, "Rollershutter", control.getName(),
+                        "Loxone jalousie control for " + control.getName(), control.getCategory().getName(), null, null,
+                        null);
+                channel = ChannelBuilder.create(channelId, "Rollershutter").withType(chTypeId)
+                        .withLabel(control.getName()).withDescription("Rollershutter for " + control.getName()).build();
+            }
+
+            if (channel != null && channelType != null) {
+                factory.addChannelType(channelType);
                 builder.withoutChannel(channelId);
-                Channel channel = ChannelBuilder.create(channelId, "Switch").withType(chTypeId)
-                        .withLabel(control.getName()).withDescription(descr).withDefaultTags(tags).build();
                 channels.add(channel);
             }
         }
 
         builder.withChannels(channels);
+
         updateThing(builder.build());
 
     }
@@ -255,15 +289,22 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
     }
 
     private void updateChannelState(ChannelUID channelUID, LxControl control) {
-        LxControlState state;
         if (control instanceof LxControlSwitch) {
-            state = control.getState(LxControlSwitch.STATE_ACTIVE);
+            LxControlState state = control.getState(LxControlSwitch.STATE_ACTIVE);
             double value = state.getValue();
             if (value == 1.0) {
                 updateState(channelUID, OnOffType.ON);
             } else if (value == 0) {
                 updateState(channelUID, OnOffType.OFF);
             }
+        } else if (control instanceof LxControlJalousie) {
+            LxControlState state = control.getState(LxControlJalousie.STATE_POSITION);
+            if (state != null) {
+                updateState(channelUID, new PercentType((int) (state.getValue() * 100)));
+            }
+            // state UP or DOWN from Loxone indicates blinds are moving up or down
+            // state UP in OpenHAB means blinds are fully up (0%) and DOWN means fully down (100%)
+            // so we will update only position and not up or down states
         }
     }
 

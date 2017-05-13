@@ -249,7 +249,7 @@ class LxWsClient {
     boolean connect() {
 
         if (state != ClientState.IDLE) {
-            close("Attempt to connect a websocket in state : " + state.toString());
+            close("Attempt to connect a websocket in non-idle state: " + state.toString());
             return false;
         }
 

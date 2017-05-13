@@ -140,6 +140,7 @@ public class LxServer {
      * Starts thread that handles communication.
      */
     public void start() {
+        logger.debug("[{}] Server start", debugId);
         if (monitorThread == null) {
             monitorThread = new LxServerThread(this);
             monitorThread.start();
@@ -151,6 +152,7 @@ public class LxServer {
      */
     public void stop() {
         if (monitorThread != null) {
+            logger.debug("[{}] Server stop", debugId);
             synchronized (monitorThread) {
                 if (queue != null) {
                     LxServerEvent event = new LxServerEvent(EventType.CLIENT_CLOSING, LxServer.OfflineReason.NONE,
@@ -165,6 +167,8 @@ public class LxServer {
                     monitorThread.interrupt();
                 }
             }
+        } else {
+            logger.debug("[{}] Server stop - no thread", debugId);
         }
     }
 
@@ -189,6 +193,7 @@ public class LxServer {
      */
     public void update(int firstConDelay, int keepAlivePeriod, int connectErrDelay, int userErrorDelay,
             int comErrorDelay) {
+        logger.debug("[{}] Server update configuration", debugId);
         if (firstConDelay >= 0) {
             this.firstConDelay = firstConDelay;
         }
@@ -371,6 +376,7 @@ public class LxServer {
                 }
 
                 // attempt to connect to the Miniserver
+                logger.debug("[{}] Server connecting to websocket", debugId);
                 boolean connected = socketClient.connect();
                 if (!connected) {
                     logger.debug("[{}] Websocket connect failed, retrying after pause", debugId);
@@ -381,34 +387,40 @@ public class LxServer {
                 while (connected) {
                     try {
                         LxServerEvent wsMsg = queue.take();
-                        switch (wsMsg.getEvent()) {
+                        EventType event = wsMsg.getEvent();
+                        logger.debug("[{}] Server received event: {}", debugId, event.toString());
+                        switch (event) {
                             case RECEIVED_CONFIG:
-                                logger.debug("[{}] Received config from websocket", debugId);
                                 LxJsonApp3 config = (LxJsonApp3) wsMsg.getObject();
                                 if (config != null) {
                                     updateConfig(config);
                                     for (LxServerListener listener : listeners) {
                                         listener.onNewConfig(server);
                                     }
+                                } else {
+                                    logger.debug("[{}] Server failed processing received configuration", debugId);
                                 }
                                 break;
                             case STATE_VALUE_UPDATE:
-                                LxWsStateUpdateEvent event = (LxWsStateUpdateEvent) wsMsg.getObject();
-                                LxControlState state = findState(event.getUuid());
+                                LxWsStateUpdateEvent update = (LxWsStateUpdateEvent) wsMsg.getObject();
+                                LxControlState state = findState(update.getUuid());
                                 if (state != null) {
-                                    state.setValue(event.getValue());
+                                    state.setValue(update.getValue());
                                     LxControl control = state.getControl();
                                     if (control != null) {
-                                        logger.debug("[{}] Known state value update of control {} to value {}", debugId,
-                                                event.getUuid().toString(), event.getValue());
+                                        logger.debug("[{}] State update {} ({}:{}) to value {}", debugId,
+                                                update.getUuid().toString(), control.getName(), state.getName(),
+                                                update.getValue());
                                         for (LxServerListener listener : listeners) {
                                             listener.onControlStateUpdate(control);
                                         }
+                                    } else {
+                                        logger.debug("[{}] State update {} ({}) of unknown control", debugId,
+                                                update.getUuid().toString(), state.getName());
                                     }
                                 }
                                 break;
                             case SERVER_ONLINE:
-                                logger.debug("[{}] Websocket goes ONLINE", debugId);
                                 for (LxServerListener listener : listeners) {
                                     listener.onServerGoesOnline();
                                 }
@@ -437,7 +449,6 @@ public class LxServer {
                                 }
                                 break;
                             case CLIENT_CLOSING:
-                                logger.debug("[{}] Received thread close request", debugId);
                                 connected = false;
                                 running = false;
                                 break;
@@ -503,9 +514,18 @@ public class LxServer {
                 states.put(stateName, controlState);
             }
 
+            LxUuid catUuid = null;
+            if (ctrl.cat != null) {
+                catUuid = new LxUuid(ctrl.cat);
+            }
+            LxUuid roomUuid = null;
+            if (ctrl.room != null) {
+                roomUuid = new LxUuid(ctrl.room);
+            }
+
             // create a new control or update existing one
-            LxControl control = addOrUpdateControl(new LxUuid(ctrl.uuidAction), ctrl.name, ctrl.type,
-                    new LxUuid(ctrl.room), new LxUuid(ctrl.cat), states);
+            LxControl control = addOrUpdateControl(new LxUuid(ctrl.uuidAction), ctrl.name, ctrl.type, roomUuid, catUuid,
+                    states);
 
             if (control != null) {
                 // if control was created, set its states objects
@@ -723,8 +743,8 @@ public class LxServer {
         LxControl ctrl = null;
         if (type.equals(LxControlSwitch.TYPE_NAME)) {
             ctrl = new LxControlSwitch(socketClient, id, name, room, category, states);
-        } else {
-            // other types not implemented yet
+        } else if (type.equals(LxControlJalousie.TYPE_NAME)) {
+            ctrl = new LxControlJalousie(socketClient, id, name, room, category, states);
         }
 
         if (ctrl != null) {

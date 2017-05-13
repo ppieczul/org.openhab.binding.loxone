@@ -32,6 +32,7 @@ This binding creates channels for controls that are [used in Loxone's user inter
 The following control types are currently supported. Please consult [API](https://www.loxone.com/enen/kb/api/) structure documentation to understand how controls map onto objects from [Loxone Config](https://www.loxone.com/enen/kb-cat/loxone-config/).
 
 * Switch ([Virtual inputs](https://www.loxone.com/enen/kb/virtual-inputs-outputs/) of switch type and [Push-button](https://www.loxone.com/enen/kb/push-button/) functional blocks)
+* Rollershutter (Blinds, Automatic Blinds, Automatic Blinds Integrated)
 
 If your control is supported, but binding does not recognize it, please check if it is exposed in Loxone UI using [Loxone Config](https://www.loxone.com/enen/kb-cat/loxone-config/). application.
 
@@ -46,11 +47,15 @@ Channel ID is defined in the following way: `loxone:miniserver:<serial>:<control
 
 Your OpenHAB server can be exposed through [myopenHAB](http://www.myopenhab.org/) cloud service to  [Amazon Alexa](https://en.wikipedia.org/wiki/Amazon_Alexa) device with [openHAB skill](https://www.amazon.com/openHAB-Foundation/dp/B01MTY7Z5L) enabled. To enable this service, please consult instructions available [here](https://community.openhab.org/t/official-alexa-smart-home-skill-for-openhab-2/23533).
 
-When creating a Miniserver Thing in the openHAB's Item Linking Simple Mode, Loxone binding will automatically create item tags required by Alexa, so that Miniserver's controls can be discovered by [Alexa smart home]( https://www.amazon.com/alexasmarthome) module. This will allow you to command Loxone controls with your voice.
+When creating a Miniserver Thing in the openHAB's Item Linking Simple Mode, Loxone binding will automatically create item tags required by Alexa, so that Miniserver's controls can be discovered by [Alexa smart home]( https://www.amazon.com/alexasmarthome) module. Tags will be created for switches, which belong to a category of "lighting" type. This will allow you to command Loxone controls with your voice.
 
 Alexa will recognize items by their labels, which will be equal to the corresponding control's name on the Miniserver. In case your controls are named in a way not directly suiting voice commands, you will need to manually add and link new items to the channels, and add proper tags as described in the above instructions.
 
 Please consult [tutorial](http://docs.openhab.org/tutorials/beginner/configuration.html) on what simple mode is and how to enable it.
 
+## Limitations
+* Setting rollershutter value to a percentage in OpenHAB is not supported
+* Amazon Alexa does not support rollershutters
+
 ## Future plans
-Add support for blinds / rollershutters / shades.
+* Workaround Amazon Alexa missing support for rollershutters with thermometer type
