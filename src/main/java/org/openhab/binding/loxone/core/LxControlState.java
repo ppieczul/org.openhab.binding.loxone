@@ -21,7 +21,7 @@ package org.openhab.binding.loxone.core;
  * @author Pawel Pieczul - initial commit
  *
  */
-public class LxControlState {
+class LxControlState {
     private LxUuid uuid;
     private String name;
     private double value;
@@ -37,7 +37,7 @@ public class LxControlState {
      * @param control
      *            control to which this state belongs
      */
-    public LxControlState(LxUuid uuid, String name, LxControl control) {
+    LxControlState(LxUuid uuid, String name, LxControl control) {
         this.uuid = uuid;
         this.name = name;
         this.control = control;
@@ -51,7 +51,7 @@ public class LxControlState {
      * @param value
      *            current state's value to set
      */
-    public void setValue(double value) {
+    void setValue(double value) {
         this.value = value;
         uuid.setUpdate(true);
     }
@@ -62,7 +62,7 @@ public class LxControlState {
      * @return
      *         current state's value
      */
-    public double getValue() {
+    double getValue() {
         return value;
     }
 
@@ -72,7 +72,7 @@ public class LxControlState {
      * @return
      *         state's control object
      */
-    public LxControl getControl() {
+    LxControl getControl() {
         return control;
     }
 
@@ -82,7 +82,7 @@ public class LxControlState {
      * @param control
      *            state's control object
      */
-    public void setControl(LxControl control) {
+    void setControl(LxControl control) {
         this.control = control;
         uuid.setUpdate(true);
     }
@@ -95,7 +95,7 @@ public class LxControlState {
      * @return
      *         state's name
      */
-    public String getName() {
+    String getName() {
         return name;
     }
 
@@ -105,7 +105,7 @@ public class LxControlState {
      * @param name
      *            state's name
      */
-    public void setName(String name) {
+    void setName(String name) {
         this.name = name;
         uuid.setUpdate(true);
     }
@@ -116,7 +116,7 @@ public class LxControlState {
      * @return
      *         state's UUID
      */
-    public LxUuid getUuid() {
+    LxUuid getUuid() {
         return uuid;
     }
 }

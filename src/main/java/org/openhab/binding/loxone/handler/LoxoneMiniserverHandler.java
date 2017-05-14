@@ -42,7 +42,6 @@ import org.openhab.binding.loxone.core.LxControl;
 import org.openhab.binding.loxone.core.LxControlInfoOnlyAnalog;
 import org.openhab.binding.loxone.core.LxControlInfoOnlyDigital;
 import org.openhab.binding.loxone.core.LxControlJalousie;
-import org.openhab.binding.loxone.core.LxControlState;
 import org.openhab.binding.loxone.core.LxControlSwitch;
 import org.openhab.binding.loxone.core.LxServer;
 import org.openhab.binding.loxone.core.LxServerListener;
@@ -317,18 +316,15 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
 
     private void updateChannelState(ChannelUID channelUID, LxControl control) {
         if (control instanceof LxControlSwitch) {
-            LxControlState state = control.getState(LxControlSwitch.STATE_ACTIVE);
-            double value = state.getValue();
+            double value = ((LxControlSwitch) control).getState();
             if (value == 1.0) {
                 updateState(channelUID, OnOffType.ON);
             } else if (value == 0) {
                 updateState(channelUID, OnOffType.OFF);
             }
         } else if (control instanceof LxControlJalousie) {
-            LxControlState state = control.getState(LxControlJalousie.STATE_POSITION);
-            if (state != null) {
-                updateState(channelUID, new PercentType((int) (state.getValue() * 100)));
-            }
+            double value = ((LxControlJalousie) control).getPosition();
+            updateState(channelUID, new PercentType((int) (value * 100)));
             // state UP or DOWN from Loxone indicates blinds are moving up or down
             // state UP in OpenHAB means blinds are fully up (0%) and DOWN means fully down (100%)
             // so we will update only position and not up or down states

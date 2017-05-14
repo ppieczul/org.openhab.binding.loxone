@@ -33,6 +33,8 @@ The following control types are currently supported. Please consult [API](https:
 
 * Switch ([Virtual inputs](https://www.loxone.com/enen/kb/virtual-inputs-outputs/) of switch type and [Push-button](https://www.loxone.com/enen/kb/push-button/) functional blocks)
 * Rollershutter (Blinds, Automatic Blinds, Automatic Blinds Integrated)
+* InfoOnlyDigital (Digital virtual inputs)
+* InfoOnlyAnalog (Analog virtual inputs)
 
 If your control is supported, but binding does not recognize it, please check if it is exposed in Loxone UI using [Loxone Config](https://www.loxone.com/enen/kb-cat/loxone-config/). application.
 

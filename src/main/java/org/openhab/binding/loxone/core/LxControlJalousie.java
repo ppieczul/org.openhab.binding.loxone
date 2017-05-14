@@ -43,37 +43,44 @@ public class LxControlJalousie extends LxControl {
      * Jalousie upper position = 0
      * Jalousie lower position = 1
      */
-    public final static String STATE_POSITION = "position";
+    private final static String STATE_POSITION = "position";
     /**
      * The shade position of the Jalousie (blinds), a number from 0 to 1
      * Blinds are not shaded = 0
      * Blinds are shaded = 1
      */
-    public final static String STATE_SHADE_POSITION = "shadeposition";
+    @SuppressWarnings("unused")
+    private final static String STATE_SHADE_POSITION = "shadeposition";
     /**
      * Only used by ones with Autopilot, this represents the safety shutdown
      */
-    public final static String STATE_SAFETY_ACTIVE = "safetyactive";
+    @SuppressWarnings("unused")
+    private final static String STATE_SAFETY_ACTIVE = "safetyactive";
     /**
      * Only used by ones with Autopilot
      */
-    public final static String STATE_AUTO_ALLOWED = "autoallowed";
+    @SuppressWarnings("unused")
+    private final static String STATE_AUTO_ALLOWED = "autoallowed";
     /**
      * Only used by ones with Autopilot
      */
-    public final static String STATE_AUTO_ACTIVE = "autoactive";
+    @SuppressWarnings("unused")
+    private final static String STATE_AUTO_ACTIVE = "autoactive";
     /**
      * Only used by ones with Autopilot, this represents the output QI in Loxone Config
      */
-    public final static String STATE_LOCKED = "locked";
+    @SuppressWarnings("unused")
+    private final static String STATE_LOCKED = "locked";
 
     /**
      * Command string used to set control's state to Down
      */
+    @SuppressWarnings("unused")
     private final static String CMD_DOWN = "Down";
     /**
      * Command string used to set control's state to Up
      */
+    @SuppressWarnings("unused")
     private final static String CMD_UP = "Up";
     /**
      * Command string used to set control's state to Full Down
@@ -127,6 +134,21 @@ public class LxControlJalousie extends LxControl {
      */
     public void Stop() throws IOException {
         socketClient.sendAction(uuid, CMD_STOP);
+    }
+
+    /**
+     * Get current position of the jalousie
+     *
+     * @return
+     *         a floting point number fromr ange 0 - fully closed to 1 - fully open
+     */
+
+    public double getPosition() {
+        LxControlState state = getState(LxControlJalousie.STATE_POSITION);
+        if (state != null) {
+            return state.getValue();
+        }
+        throw new NullPointerException("Jalousie state 'position' is null");
     }
 
 }

@@ -33,7 +33,7 @@ public class LxControlSwitch extends LxControl {
     /**
      * Switch has one state that can be on/off
      */
-    public final static String STATE_ACTIVE = "active";
+    private final static String STATE_ACTIVE = "active";
 
     /**
      * Command string used to set control's state to ON
@@ -87,5 +87,19 @@ public class LxControlSwitch extends LxControl {
      */
     public void Off() throws IOException {
         socketClient.sendAction(uuid, CMD_OFF);
+    }
+
+    /**
+     * Get current value of the switch'es state.
+     * 
+     * @return
+     *         0 - switch off, 1 - switch on
+     */
+    public double getState() {
+        LxControlState state = getState(STATE_ACTIVE);
+        if (state != null) {
+            return state.getValue();
+        }
+        throw new NullPointerException("Switch state 'active' is null");
     }
 }
