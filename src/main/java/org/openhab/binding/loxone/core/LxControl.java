@@ -152,8 +152,11 @@ public abstract class LxControl {
             state.setControl(this);
         }
         uuid.setUpdate(true);
-        room.addOrUpdateControl(this);
-        category.addOrUpdateControl(this);
+        if (room != null) {
+            room.addOrUpdateControl(this);
+        }
+        if (category != null) {
+            category.addOrUpdateControl(this);
+        }
     }
-
 }

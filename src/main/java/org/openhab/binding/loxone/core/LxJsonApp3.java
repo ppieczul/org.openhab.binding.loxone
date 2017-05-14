@@ -45,11 +45,23 @@ class LxJsonApp3 {
     }
 
     class LxJsonControl {
+
+        class LxJsonDetails {
+            class LxJsonText {
+                String off;
+                String on;
+            }
+
+            LxJsonText text;
+            String format;
+        }
+
         String uuidAction;
         String name;
         String type;
         String room;
         String cat;
+        LxJsonDetails details;
         Map<String, String> states;
     }
 }

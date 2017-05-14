@@ -21,6 +21,7 @@ import java.util.Set;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.library.types.StopMoveType;
+import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.library.types.UpDownType;
 import org.eclipse.smarthome.core.thing.Channel;
 import org.eclipse.smarthome.core.thing.ChannelUID;
@@ -38,6 +39,8 @@ import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.loxone.config.LoxoneMiniserverConfig;
 import org.openhab.binding.loxone.core.LxCategory;
 import org.openhab.binding.loxone.core.LxControl;
+import org.openhab.binding.loxone.core.LxControlInfoOnlyAnalog;
+import org.openhab.binding.loxone.core.LxControlInfoOnlyDigital;
 import org.openhab.binding.loxone.core.LxControlJalousie;
 import org.openhab.binding.loxone.core.LxControlState;
 import org.openhab.binding.loxone.core.LxControlSwitch;
@@ -198,31 +201,55 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
             Channel channel = null;
             ChannelTypeUID chTypeId = null;
             ChannelType channelType = null;
+            String uuid = control.getUuid().toString();
             ChannelUID channelId = new ChannelUID(getThing().getUID(), control.getUuid().toString());
+
+            String name = control.getName();
+            LxCategory cat = control.getCategory();
+
+            String category = null;
+            if (cat != null) {
+                category = cat.getName();
+            }
 
             if (control instanceof LxControlSwitch) {
 
-                chTypeId = new ChannelTypeUID(getThing().getUID() + ":switch:" + control.getUuid().toString());
+                chTypeId = new ChannelTypeUID(getThing().getUID() + ":switch:" + uuid);
 
                 Set<String> tags = null;
-                LxCategory cat = control.getCategory();
                 if (cat != null && cat.getType() == LxCategory.CategoryType.LIGHTS) {
                     tags = Collections.singleton("Lighting");
                 }
 
-                channelType = new ChannelType(chTypeId, false, "Switch", control.getName(),
-                        "Loxone switch for " + control.getName(), control.getCategory().getName(), tags, null, null);
-                channel = ChannelBuilder.create(channelId, "Switch").withType(chTypeId).withLabel(control.getName())
-                        .withDescription("Switch for " + control.getName()).withDefaultTags(tags).build();
+                channelType = new ChannelType(chTypeId, false, "Switch", control.getName(), "Loxone switch for " + name,
+                        category, tags, null, null);
+                channel = ChannelBuilder.create(channelId, "Switch").withType(chTypeId).withLabel(name)
+                        .withDescription("Switch for " + name).withDefaultTags(tags).build();
 
             } else if (control instanceof LxControlJalousie) {
 
-                chTypeId = new ChannelTypeUID(getThing().getUID() + ":rollershutter:" + control.getUuid().toString());
-                channelType = new ChannelType(chTypeId, false, "Rollershutter", control.getName(),
-                        "Loxone jalousie control for " + control.getName(), control.getCategory().getName(), null, null,
-                        null);
-                channel = ChannelBuilder.create(channelId, "Rollershutter").withType(chTypeId)
-                        .withLabel(control.getName()).withDescription("Rollershutter for " + control.getName()).build();
+                chTypeId = new ChannelTypeUID(getThing().getUID() + ":rollershutter:" + uuid);
+                channelType = new ChannelType(chTypeId, false, "Rollershutter", name,
+                        "Loxone jalousie control for " + control.getName(), category, null, null, null);
+                channel = ChannelBuilder.create(channelId, "Rollershutter").withType(chTypeId).withLabel(name)
+                        .withDescription("Rollershutter for " + name).build();
+
+            } else if (control instanceof LxControlInfoOnlyDigital) {
+
+                chTypeId = new ChannelTypeUID(getThing().getUID() + ":infoonlydigital:" + uuid);
+                channelType = new ChannelType(chTypeId, false, "String", name, "Digital virtual state of  " + name,
+                        category, null, null, null);
+                channel = ChannelBuilder.create(channelId, "String").withType(chTypeId).withLabel(name)
+                        .withDescription("Digital virtual state of " + name).build();
+
+            } else if (control instanceof LxControlInfoOnlyAnalog) {
+
+                chTypeId = new ChannelTypeUID(getThing().getUID() + ":infoonlyanalog:" + uuid);
+                channelType = new ChannelType(chTypeId, false, "String", name, "Analog virtual state of  " + name,
+                        category, null, null, null);
+                channel = ChannelBuilder.create(channelId, "String").withType(chTypeId).withLabel(name)
+                        .withDescription("Analog virtual state of " + name).build();
+
             }
 
             if (channel != null && channelType != null) {
@@ -267,7 +294,7 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
                         "Too many failed login attempts - stopped trying");
                 break;
             case UNAUTHORIZED:
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "User not authorized");
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "  ");
                 break;
             case IDLE_TIMEOUT:
                 logger.warn("Idle timeout from Loxone Miniserver - adjust keepalive settings");
@@ -305,6 +332,16 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
             // state UP or DOWN from Loxone indicates blinds are moving up or down
             // state UP in OpenHAB means blinds are fully up (0%) and DOWN means fully down (100%)
             // so we will update only position and not up or down states
+        } else if (control instanceof LxControlInfoOnlyDigital) {
+            String value = ((LxControlInfoOnlyDigital) control).getFormattedValue();
+            if (value != null) {
+                updateState(channelUID, new StringType(value));
+            }
+        } else if (control instanceof LxControlInfoOnlyAnalog) {
+            String value = ((LxControlInfoOnlyAnalog) control).getFormattedValue();
+            if (value != null) {
+                updateState(channelUID, new StringType(value));
+            }
         }
     }
 

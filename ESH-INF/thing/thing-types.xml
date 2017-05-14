@@ -68,7 +68,7 @@
                 <default>10</default>                
             </parameter>
             <parameter name="userErrorDelay" type="integer" min="0" max="3600" required="true" groupName="timeouts">
-                <label>User lockout delay</label>
+                <label>Authentication error delay</label>
                 <description>Time in seconds between user login error as a result of wrong name/password or no authority and next connection attempt (seconds, 0-3600)</description>
                 <advanced>true</advanced>
                 <default>60</default>                

@@ -525,7 +525,7 @@ public class LxServer {
 
             // create a new control or update existing one
             LxControl control = addOrUpdateControl(new LxUuid(ctrl.uuidAction), ctrl.name, ctrl.type, roomUuid, catUuid,
-                    states);
+                    states, ctrl);
 
             if (control != null) {
                 // if control was created, set its states objects
@@ -718,11 +718,13 @@ public class LxServer {
      *            UUID of room this control belongs to
      * @param categoryId
      *            UUID of category this control belongs to
+     * @param jsonControl
+     *            JSON original object of this control to get extra parameters
      * @return
      *         newly created control or existing one, null if incorrect parameters/configuration
      */
     private LxControl addOrUpdateControl(LxUuid id, String name, String type, LxUuid roomId, LxUuid categoryId,
-            Map<String, LxControlState> states) {
+            Map<String, LxControlState> states, LxJsonApp3.LxJsonControl jsonControl) {
 
         if (controls == null) {
             return null;
@@ -745,6 +747,13 @@ public class LxServer {
             ctrl = new LxControlSwitch(socketClient, id, name, room, category, states);
         } else if (type.equals(LxControlJalousie.TYPE_NAME)) {
             ctrl = new LxControlJalousie(socketClient, id, name, room, category, states);
+        } else if (type.equals(LxControlInfoOnlyDigital.TYPE_NAME)) {
+            String textOn = jsonControl.details.text.on;
+            String textOff = jsonControl.details.text.off;
+            ctrl = new LxControlInfoOnlyDigital(socketClient, id, name, room, category, states, textOn, textOff);
+        } else if (type.equals(LxControlInfoOnlyAnalog.TYPE_NAME)) {
+            String format = jsonControl.details.format;
+            ctrl = new LxControlInfoOnlyAnalog(socketClient, id, name, room, category, states, format);
         }
 
         if (ctrl != null) {
