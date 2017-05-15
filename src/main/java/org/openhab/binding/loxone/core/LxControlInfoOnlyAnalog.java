@@ -28,11 +28,12 @@ public class LxControlInfoOnlyAnalog extends LxControl {
     /**
      * InfoOnlyAnalog state with current value
      */
-    public final static String STATE_VALUE = "value";
+    private final static String STATE_VALUE = "value";
     /**
      * InfoOnlyAnalog state with error value
      */
-    public final static String STATE_ERROR = "error";
+    @SuppressWarnings("unused")
+    private final static String STATE_ERROR = "error";
 
     private String format;
 

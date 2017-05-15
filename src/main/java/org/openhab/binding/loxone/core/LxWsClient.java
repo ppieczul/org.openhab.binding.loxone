@@ -486,8 +486,13 @@ class LxWsClient {
                             close("Timeout on authentication procedure, response : " + resp.LL.value);
                         } else if (resp.LL.control.equals(CMD_GET_KEY) && resp.LL.Code == 200) {
                             String credentials = hashCredentials(resp.LL.value);
-                            sendString(CMD_AUTHENTICATE + credentials);
-                            state = ClientState.AUTHENTICATING;
+                            if (credentials != null) {
+                                sendString(CMD_AUTHENTICATE + credentials);
+                                state = ClientState.AUTHENTICATING;
+                            } else {
+                                notifyMaster(EventType.SERVER_OFFLINE, LxServer.OfflineReason.INTERNAL_ERROR, null);
+                                close("Error creating credentials");
+                            }
                         }
                         break;
                     case AUTHENTICATING:
@@ -509,13 +514,13 @@ class LxWsClient {
                         if (config != null) {
                             logger.debug("[{}] Received configuration from server", debugId);
                             notifyMaster(EventType.RECEIVED_CONFIG, null, config);
+                            sendString(CMD_ENABLE_UPDATES);
+                            state = ClientState.RUNNING;
+                            notifyMaster(EventType.SERVER_ONLINE, null, null);
                         } else {
                             notifyMaster(EventType.SERVER_OFFLINE, LxServer.OfflineReason.INTERNAL_ERROR, null);
                             close("Error processing received configuration");
                         }
-                        sendString(CMD_ENABLE_UPDATES);
-                        state = ClientState.RUNNING;
-                        notifyMaster(EventType.SERVER_ONLINE, null, null);
                         break;
                     case RUNNING:
                     case CLOSING:

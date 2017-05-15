@@ -33,11 +33,13 @@ public class LxControlJalousie extends LxControl {
     /**
      * Jalousie is moving up
      */
-    public final static String STATE_UP = "up";
+    @SuppressWarnings("unused")
+    private final static String STATE_UP = "up";
     /**
      * Jalousie is moving down
      */
-    public final static String STATE_DOWN = "down";
+    @SuppressWarnings("unused")
+    private final static String STATE_DOWN = "down";
     /**
      * The position of the Jalousie, a number from 0 to 1
      * Jalousie upper position = 0

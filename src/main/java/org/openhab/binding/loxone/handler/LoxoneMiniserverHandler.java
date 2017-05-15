@@ -293,7 +293,8 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
                         "Too many failed login attempts - stopped trying");
                 break;
             case UNAUTHORIZED:
-                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "  ");
+                updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR,
+                        "User authentication error (invalid user name or password)");
                 break;
             case IDLE_TIMEOUT:
                 logger.warn("Idle timeout from Loxone Miniserver - adjust keepalive settings");

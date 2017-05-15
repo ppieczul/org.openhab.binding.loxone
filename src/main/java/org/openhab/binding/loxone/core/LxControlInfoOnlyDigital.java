@@ -27,7 +27,7 @@ public class LxControlInfoOnlyDigital extends LxControl {
     /**
      * InfoOnlyDigital has one state that can be on/off
      */
-    public final static String STATE_ACTIVE = "active";
+    private final static String STATE_ACTIVE = "active";
 
     private String textOn;
     private String textOff;
