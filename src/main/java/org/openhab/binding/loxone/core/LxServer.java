@@ -745,6 +745,8 @@ public class LxServer {
         LxControl ctrl = null;
         if (type.equals(LxControlSwitch.TYPE_NAME)) {
             ctrl = new LxControlSwitch(socketClient, id, name, room, category, states);
+        } else if (type.equals(LxControlPushbutton.TYPE_NAME)) {
+            ctrl = new LxControlPushbutton(socketClient, id, name, room, category, states);
         } else if (type.equals(LxControlJalousie.TYPE_NAME)) {
             ctrl = new LxControlJalousie(socketClient, id, name, room, category, states);
         } else if (type.equals(LxControlInfoOnlyDigital.TYPE_NAME)) {

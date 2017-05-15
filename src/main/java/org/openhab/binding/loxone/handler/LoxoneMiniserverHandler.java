@@ -42,6 +42,7 @@ import org.openhab.binding.loxone.core.LxControl;
 import org.openhab.binding.loxone.core.LxControlInfoOnlyAnalog;
 import org.openhab.binding.loxone.core.LxControlInfoOnlyDigital;
 import org.openhab.binding.loxone.core.LxControlJalousie;
+import org.openhab.binding.loxone.core.LxControlPushbutton;
 import org.openhab.binding.loxone.core.LxControlSwitch;
 import org.openhab.binding.loxone.core.LxServer;
 import org.openhab.binding.loxone.core.LxServerListener;
@@ -104,7 +105,11 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
             if (control instanceof LxControlSwitch) {
                 if (command instanceof OnOffType) {
                     if ((OnOffType) command == OnOffType.ON) {
-                        ((LxControlSwitch) control).On();
+                        if (control instanceof LxControlPushbutton) {
+                            ((LxControlPushbutton) control).Pulse();
+                        } else {
+                            ((LxControlSwitch) control).On();
+                        }
                     } else {
                         ((LxControlSwitch) control).Off();
                     }
@@ -212,21 +217,26 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
             }
 
             if (control instanceof LxControlSwitch) {
+                if (control instanceof LxControlPushbutton) {
+                    chTypeId = new ChannelTypeUID(getThing().getUID() + ":pushbutton:" + uuid);
+                    channelType = new ChannelType(chTypeId, false, "Switch", name,
+                            "Loxone pushbuton control for " + control.getName(), category, null, null, null);
+                    channel = ChannelBuilder.create(channelId, "Switch").withType(chTypeId).withLabel(name)
+                            .withDescription("Pushbutton for " + name).build();
+                } else {
+                    chTypeId = new ChannelTypeUID(getThing().getUID() + ":switch:" + uuid);
 
-                chTypeId = new ChannelTypeUID(getThing().getUID() + ":switch:" + uuid);
+                    Set<String> tags = null;
+                    if (cat != null && cat.getType() == LxCategory.CategoryType.LIGHTS) {
+                        tags = Collections.singleton("Lighting");
+                    }
 
-                Set<String> tags = null;
-                if (cat != null && cat.getType() == LxCategory.CategoryType.LIGHTS) {
-                    tags = Collections.singleton("Lighting");
+                    channelType = new ChannelType(chTypeId, false, "Switch", control.getName(),
+                            "Loxone switch for " + name, category, tags, null, null);
+                    channel = ChannelBuilder.create(channelId, "Switch").withType(chTypeId).withLabel(name)
+                            .withDescription("Switch for " + name).withDefaultTags(tags).build();
                 }
-
-                channelType = new ChannelType(chTypeId, false, "Switch", control.getName(), "Loxone switch for " + name,
-                        category, tags, null, null);
-                channel = ChannelBuilder.create(channelId, "Switch").withType(chTypeId).withLabel(name)
-                        .withDescription("Switch for " + name).withDefaultTags(tags).build();
-
             } else if (control instanceof LxControlJalousie) {
-
                 chTypeId = new ChannelTypeUID(getThing().getUID() + ":rollershutter:" + uuid);
                 channelType = new ChannelType(chTypeId, false, "Rollershutter", name,
                         "Loxone jalousie control for " + control.getName(), category, null, null, null);
