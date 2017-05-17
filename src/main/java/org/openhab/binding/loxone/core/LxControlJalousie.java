@@ -33,12 +33,10 @@ public class LxControlJalousie extends LxControl implements LxControlStateListen
     /**
      * Jalousie is moving up
      */
-    @SuppressWarnings("unused")
     private final static String STATE_UP = "up";
     /**
      * Jalousie is moving down
      */
-    @SuppressWarnings("unused")
     private final static String STATE_DOWN = "down";
     /**
      * The position of the Jalousie, a number from 0 to 1

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Loxone Binding
 Bundle-SymbolicName: org.openhab.binding.loxone;singleton:=true
 Bundle-Vendor: openHAB
-Bundle-Version: 2.1.0.2
+Bundle-Version: 2.1.0.SNAPSHOT
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
 Import-Package: 
@@ -11,12 +11,12 @@ Import-Package:
  com.google.gson,
  org.apache.commons.codec,
  org.apache.commons.codec.binary,
- org.eclipse.jetty.http;version="9.2.12",
+ org.eclipse.jetty.http,
  org.eclipse.jetty.util,
  org.eclipse.jetty.util.component,
  org.eclipse.jetty.websocket.api,
  org.eclipse.jetty.websocket.api.annotations,
- org.eclipse.jetty.websocket.api.extensions;version="9.2.12",
+ org.eclipse.jetty.websocket.api.extensions,
  org.eclipse.jetty.websocket.client,
  org.eclipse.jetty.websocket.common,
  org.eclipse.jetty.websocket.common.extensions,

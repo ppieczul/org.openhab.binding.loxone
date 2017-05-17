@@ -723,6 +723,8 @@ public class LxServer {
      *            UUID of room this control belongs to
      * @param categoryId
      *            UUID of category this control belongs to
+     * @param states
+     *            a map of UUID and {@link LxControlState} representing control states
      * @param jsonControl
      *            JSON original object of this control to get extra parameters
      * @return
