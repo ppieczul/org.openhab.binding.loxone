@@ -121,17 +121,16 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
 
                 LxControlJalousie jalousie = (LxControlJalousie) control;
                 if (command instanceof PercentType) {
-                    // currently no support for moving blinds to given percent
-                    updateChannelState(channelUID, control);
+                    jalousie.moveToPosition(((PercentType) command).doubleValue() / 100);
                 } else if (command instanceof UpDownType) {
                     if ((UpDownType) command == UpDownType.UP) {
-                        jalousie.FullUp();
+                        jalousie.fullUp();
                     } else {
-                        jalousie.FullDown();
+                        jalousie.fullDown();
                     }
                 } else if (command instanceof StopMoveType) {
                     if ((StopMoveType) command == StopMoveType.STOP) {
-                        jalousie.Stop();
+                        jalousie.stop();
                     }
                 }
                 return;

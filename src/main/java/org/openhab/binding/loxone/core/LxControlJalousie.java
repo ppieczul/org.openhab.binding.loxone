@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Pawel Pieczul - initial commit
  *
  */
-public class LxControlJalousie extends LxControl {
+public class LxControlJalousie extends LxControl implements LxControlStateListener {
     /**
      * A name by which Miniserver refers to jalousie controls
      */
@@ -97,6 +97,8 @@ public class LxControlJalousie extends LxControl {
      */
     private final static String CMD_STOP = "Stop";
 
+    private double targetPosition = -1;
+
     /**
      * Create jalousie control object.
      *
@@ -116,6 +118,11 @@ public class LxControlJalousie extends LxControl {
     public LxControlJalousie(LxWsClient client, LxUuid uuid, String name, LxContainer room, LxCategory category,
             Map<String, LxControlState> states) {
         super(client, uuid, name, room, category, states);
+
+        LxControlState positionState = getState(STATE_POSITION);
+        if (positionState != null) {
+            positionState.addListener(this);
+        }
     }
 
     /**
@@ -126,7 +133,7 @@ public class LxControlJalousie extends LxControl {
      * @throws IOException
      *             when something went wrong with communication
      */
-    public void FullUp() throws IOException {
+    public void fullUp() throws IOException {
         socketClient.sendAction(uuid, CMD_FULL_UP);
     }
 
@@ -138,7 +145,7 @@ public class LxControlJalousie extends LxControl {
      * @throws IOException
      *             when something went wrong with communication
      */
-    public void FullDown() throws IOException {
+    public void fullDown() throws IOException {
         socketClient.sendAction(uuid, CMD_FULL_DOWN);
     }
 
@@ -150,8 +157,33 @@ public class LxControlJalousie extends LxControl {
      * @throws IOException
      *             when something went wrong with communication
      */
-    public void Stop() throws IOException {
+    public void stop() throws IOException {
         socketClient.sendAction(uuid, CMD_STOP);
+    }
+
+    /**
+     * Move the rollershutter (jalousie) to a desired position.
+     * <p>
+     * The jalousie will start moving in the desired direction based on the current position. It will stop moving once
+     * there is a state update event received with value above/below (depending on direction) or equal to the set
+     * position.
+     *
+     * @param position
+     *            end position to move jalousie to, floating point number from 0..1 (0-fully closed to 1-fully open)
+     * @throws IOException
+     *             when something went wrong with communication
+     */
+    public void moveToPosition(double position) throws IOException {
+        double currentPosition = getPosition();
+        if (currentPosition > position) {
+            logger.debug("Moving jalousie up from {} to {}", currentPosition, position);
+            targetPosition = position;
+            fullUp();
+        } else if (currentPosition < position) {
+            logger.debug("Moving jalousie down from {} to {}", currentPosition, position);
+            targetPosition = position;
+            fullDown();
+        }
     }
 
     /**
@@ -168,4 +200,29 @@ public class LxControlJalousie extends LxControl {
         throw new NullPointerException("Jalousie state 'position' is null");
     }
 
+    /**
+     * Monitor jalousie position against desired target position and stop it if target position is reached.
+     */
+    @Override
+    public void onStateChange(LxControlState state) {
+        // check position changes
+        if (state.getName().equals(STATE_POSITION) && targetPosition > 0 && targetPosition < 1) {
+            // see in which direction jalousie is moving
+            LxControlState up = getState(STATE_UP);
+            LxControlState down = getState(STATE_DOWN);
+            if (up != null && down != null) {
+                double currentPosition = state.getValue();
+                if (((up.getValue() == 1) && (currentPosition < targetPosition))
+                        || ((down.getValue() == 1) && (currentPosition > targetPosition))) {
+                    targetPosition = -1;
+                    try {
+                        stop();
+                    } catch (IOException e) {
+                        logger.debug("Error stopping jalousie when meeting target position.");
+                    }
+
+                }
+            }
+        }
+    }
 }

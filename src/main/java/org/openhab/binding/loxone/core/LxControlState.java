@@ -8,6 +8,9 @@
  */
 package org.openhab.binding.loxone.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A state of a Loxone control ({@link LxControl})
  * <p>
@@ -26,6 +29,7 @@ class LxControlState {
     private String name;
     private double value;
     private LxControl control;
+    private List<LxControlStateListener> listeners = new ArrayList<LxControlStateListener>();
 
     /**
      * Create a control state object.
@@ -52,7 +56,12 @@ class LxControlState {
      *            current state's value to set
      */
     void setValue(double value) {
-        this.value = value;
+        if (this.value != value) {
+            this.value = value;
+            for (LxControlStateListener listener : listeners) {
+                listener.onStateChange(this);
+            }
+        }
         uuid.setUpdate(true);
     }
 
@@ -119,4 +128,25 @@ class LxControlState {
     LxUuid getUuid() {
         return uuid;
     }
+
+    /**
+     * Adds a listener to state changes
+     *
+     * @param listener
+     *            an object implementing state change listener interface
+     */
+    void addListener(LxControlStateListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Removes a listener of state changes
+     *
+     * @param listener
+     *            listener object to remove
+     */
+    void removeListener(LxControlStateListener listener) {
+        listeners.remove(listener);
+    }
+
 }

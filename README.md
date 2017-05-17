@@ -32,6 +32,7 @@ This binding creates channels for controls that are [used in Loxone's user inter
 The following control types are currently supported. Please consult [API](https://www.loxone.com/enen/kb/api/) structure documentation to understand how controls map onto objects from [Loxone Config](https://www.loxone.com/enen/kb-cat/loxone-config/).
 
 * Switch ([Virtual inputs](https://www.loxone.com/enen/kb/virtual-inputs-outputs/) of switch type and [Push-button](https://www.loxone.com/enen/kb/push-button/) functional blocks)
+* Pushbutton (virtual inputs of push button type)
 * Rollershutter (Blinds, Automatic Blinds, Automatic Blinds Integrated)
 * InfoOnlyDigital (Digital virtual inputs)
 * InfoOnlyAnalog (Analog virtual inputs)
@@ -56,8 +57,6 @@ Alexa will recognize items by their labels, which will be equal to the correspon
 Please consult [tutorial](http://docs.openhab.org/tutorials/beginner/configuration.html) on what simple mode is and how to enable it.
 
 ## Limitations
-* Setting rollershutter value to a percentage in OpenHAB is not supported
-* Amazon Alexa does not support rollershutters
+* As there is no push button item type in OpenHAB, Loxone's push button is an OpenHAB's switch, which always generates a short pulse on changing its state to on. If you use simple UI mode and framework generates items for you, switches for push buttons will still be toggle switches. To change it to push button style, you have to create item manually with autoupdate=false parameter.
 
-## Future plans
-* Workaround Amazon Alexa missing support for rollershutters with thermometer type
+

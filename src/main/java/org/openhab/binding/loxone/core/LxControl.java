@@ -11,6 +11,9 @@ package org.openhab.binding.loxone.core;
 import java.util.Map;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A control of Loxone Miniserver.
  * <p>
@@ -26,6 +29,7 @@ public abstract class LxControl {
     private LxContainer room;
     private LxCategory category;
     private Map<String, LxControlState> states = null;
+    Logger logger = LoggerFactory.getLogger(LxControl.class);
 
     LxUuid uuid;
     LxWsClient socketClient;
