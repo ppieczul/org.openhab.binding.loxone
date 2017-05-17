@@ -71,6 +71,7 @@ public class LxServer {
     private LxWsClient socketClient;
     private Thread monitorThread = null;
     private BlockingQueue<LxServerEvent> queue = new LinkedBlockingQueue<LxServerEvent>();
+
     private Logger logger = LoggerFactory.getLogger(LxServer.class);
     private static int debugId = 1;
 
@@ -341,6 +342,7 @@ public class LxServer {
 
     /**
      * Thread that performs and supervises communication with the Miniserver.
+     * <p>
      * It will try to maintain connection as long as possible, handling errors and interruptions. There are two reasons
      * when this thread will terminate and stop connecting to the Miniserver:
      * when it receives close command from supervisor ({@link LxServer} or when Miniserver locks out user due to too
@@ -481,6 +483,9 @@ public class LxServer {
         for (LxUuid id : uuids) {
             id.setUpdate(false);
         }
+        for (LxUuid id : states.keySet()) {
+            id.setUpdate(false);
+        }
 
         miniserverName = buildName(config.msInfo.msName);
         projectName = buildName(config.msInfo.projectName);
@@ -499,7 +504,7 @@ public class LxServer {
         }
         for (LxJsonApp3.LxJsonControl ctrl : config.controls.values()) {
 
-            Map<String, LxControlState> states = new HashMap<String, LxControlState>();
+            Map<String, LxControlState> newStates = new HashMap<String, LxControlState>();
             for (Map.Entry<String, String> state : ctrl.states.entrySet()) {
 
                 LxUuid stateId = new LxUuid(state.getValue());
@@ -511,7 +516,7 @@ public class LxServer {
                 } else {
                     controlState.setName(stateName);
                 }
-                states.put(stateName, controlState);
+                newStates.put(stateName, controlState);
             }
 
             LxUuid catUuid = null;
@@ -525,11 +530,11 @@ public class LxServer {
 
             // create a new control or update existing one
             LxControl control = addOrUpdateControl(new LxUuid(ctrl.uuidAction), ctrl.name, ctrl.type, roomUuid, catUuid,
-                    states, ctrl);
+                    newStates, ctrl);
 
             if (control != null) {
                 // if control was created, set its states objects
-                for (LxControlState state : states.values()) {
+                for (LxControlState state : newStates.values()) {
                     this.states.put(state.getUuid(), state);
                 }
             }
@@ -729,6 +734,7 @@ public class LxServer {
         if (controls == null) {
             return null;
         }
+
         LxContainer room = findRoom(roomId);
         LxCategory category = findCategory(categoryId);
 
@@ -739,23 +745,25 @@ public class LxServer {
         }
 
         id = addUuid(id);
-
         type = type.toLowerCase();
 
         LxControl ctrl = null;
         if (type.equals(LxControlSwitch.TYPE_NAME)) {
             ctrl = new LxControlSwitch(socketClient, id, name, room, category, states);
+
         } else if (type.equals(LxControlPushbutton.TYPE_NAME)) {
             ctrl = new LxControlPushbutton(socketClient, id, name, room, category, states);
+
         } else if (type.equals(LxControlJalousie.TYPE_NAME)) {
             ctrl = new LxControlJalousie(socketClient, id, name, room, category, states);
+
         } else if (type.equals(LxControlInfoOnlyDigital.TYPE_NAME)) {
-            String textOn = jsonControl.details.text.on;
-            String textOff = jsonControl.details.text.off;
-            ctrl = new LxControlInfoOnlyDigital(socketClient, id, name, room, category, states, textOn, textOff);
+            ctrl = new LxControlInfoOnlyDigital(socketClient, id, name, room, category, states,
+                    jsonControl.details.text.on, jsonControl.details.text.off);
+
         } else if (type.equals(LxControlInfoOnlyAnalog.TYPE_NAME)) {
-            String format = jsonControl.details.format;
-            ctrl = new LxControlInfoOnlyAnalog(socketClient, id, name, room, category, states, format);
+            ctrl = new LxControlInfoOnlyAnalog(socketClient, id, name, room, category, states,
+                    jsonControl.details.format);
         }
 
         if (ctrl != null) {

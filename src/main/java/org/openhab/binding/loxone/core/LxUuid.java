@@ -39,14 +39,12 @@ public class LxUuid {
     }
 
     public LxUuid(byte data[], int offset) {
-
         uuid = String.format("%08x-%04x-%04x-%02x%02x%02x%02x%02x%02x%02x%02x",
                 ByteBuffer.wrap(data, offset, 4).order(ByteOrder.LITTLE_ENDIAN).getInt(),
                 ByteBuffer.wrap(data, offset + 4, 2).order(ByteOrder.LITTLE_ENDIAN).getShort(),
                 ByteBuffer.wrap(data, offset + 6, 2).order(ByteOrder.LITTLE_ENDIAN).getShort(), data[offset + 8],
                 data[offset + 9], data[offset + 10], data[offset + 11], data[offset + 12], data[offset + 13],
                 data[offset + 14], data[offset + 15]);
-
         updated = true;
     }
 

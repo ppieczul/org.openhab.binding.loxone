@@ -37,6 +37,24 @@ public class LxControlInfoOnlyAnalog extends LxControl {
 
     private String format;
 
+    /**
+     * Create InfoOnlyAnalog control object.
+     *
+     * @param client
+     *            communication client used to send commands to the Miniserver
+     * @param uuid
+     *            control's UUID
+     * @param name
+     *            control's name
+     * @param room
+     *            room to which control belongs
+     * @param category
+     *            category to which control belongs
+     * @param states
+     *            control's states and their names
+     * @param format
+     *            string with format (for String.format) to present current value of the "active" state of this control
+     */
     public LxControlInfoOnlyAnalog(LxWsClient client, LxUuid uuid, String name, LxContainer room, LxCategory category,
             Map<String, LxControlState> states, String format) {
         super(client, uuid, name, room, category, states);

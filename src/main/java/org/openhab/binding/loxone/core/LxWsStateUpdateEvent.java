@@ -61,14 +61,32 @@ class LxWsStateUpdateEvent {
         this.text = text;
     }
 
+    /**
+     * Get UUID of this state
+     *
+     * @return
+     *         UUID of this state
+     */
     LxUuid getUuid() {
         return uuid;
     }
 
+    /**
+     * Get current value of this state
+     *
+     * @return
+     *         current value of the state
+     */
     double getValue() {
         return value;
     }
 
+    /**
+     * Get current text value of this state
+     * 
+     * @return
+     *         current text value of this state
+     */
     String getText() {
         return text;
     }

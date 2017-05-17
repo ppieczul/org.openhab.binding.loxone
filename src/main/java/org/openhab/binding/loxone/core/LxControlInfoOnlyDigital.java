@@ -32,6 +32,26 @@ public class LxControlInfoOnlyDigital extends LxControl {
     private String textOn;
     private String textOff;
 
+    /**
+     * Create InfoOnlyDigital control object.
+     *
+     * @param client
+     *            communication client used to send commands to the Miniserver
+     * @param uuid
+     *            control's UUID
+     * @param name
+     *            control's name
+     * @param room
+     *            room to which control belongs
+     * @param category
+     *            category to which control belongs
+     * @param states
+     *            control's states and their names
+     * @param textOn
+     *            string describing what it means when control in in ON state
+     * @param textOff
+     *            string describing what it means when control in in OFF state
+     */
     public LxControlInfoOnlyDigital(LxWsClient client, LxUuid uuid, String name, LxContainer room, LxCategory category,
             Map<String, LxControlState> states, String textOn, String textOff) {
         super(client, uuid, name, room, category, states);
@@ -40,7 +60,7 @@ public class LxControlInfoOnlyDigital extends LxControl {
     }
 
     /**
-     * Obtain current value of a virtual state, expressed in a format configured on the Miniserver
+     * Obtain current value of the virtual state, expressed in a format configured on the Miniserver
      *
      * @return
      *         string for on/off value of the state or null if current value is not compatible with this control

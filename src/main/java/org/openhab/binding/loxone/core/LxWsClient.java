@@ -62,8 +62,11 @@ class LxWsClient {
     private LxWsBinaryHeader header = null;
     private WebSocketClient wsClient = null;
     private BlockingQueue<LxServerEvent> queue;
-
+    private ClientState state = ClientState.IDLE;
     private Logger logger = LoggerFactory.getLogger(LxWsClient.class);
+
+    private static final ScheduledExecutorService scheduler = ThreadPoolManager
+            .getScheduledPool(LxWsClient.class.getName());
 
     private final static String SOCKET_URL = "/ws/rfc6455";
     private final static String CMD_ACTION = "jdev/sps/io/";
@@ -207,11 +210,6 @@ class LxWsClient {
             length = ByteBuffer.wrap(buffer, offset + 3, 4).getInt();
         }
     }
-
-    private ClientState state = ClientState.IDLE;
-
-    private static final ScheduledExecutorService scheduler = ThreadPoolManager
-            .getScheduledPool(LxWebSocket.class.getName());
 
     /**
      * Create websocket client object

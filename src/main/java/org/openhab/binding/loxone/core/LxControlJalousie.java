@@ -97,13 +97,29 @@ public class LxControlJalousie extends LxControl {
      */
     private final static String CMD_STOP = "Stop";
 
+    /**
+     * Create jalousie control object.
+     *
+     * @param client
+     *            communication client used to send commands to the Miniserver
+     * @param uuid
+     *            jalousie's UUID
+     * @param name
+     *            jalousie's name
+     * @param room
+     *            room to which jalousie belongs
+     * @param category
+     *            category to which jalousie belongs
+     * @param states
+     *            jalousie's states and their names
+     */
     public LxControlJalousie(LxWsClient client, LxUuid uuid, String name, LxContainer room, LxCategory category,
             Map<String, LxControlState> states) {
         super(client, uuid, name, room, category, states);
     }
 
     /**
-     * Set rollershutter to full up position.
+     * Set rollershutter (jalousie) to full up position.
      * <p>
      * Sends a command to operate the rollershutter.
      *
@@ -115,7 +131,7 @@ public class LxControlJalousie extends LxControl {
     }
 
     /**
-     * Set rollershutter to full down position.
+     * Set rollershutter (jalousie) to full down position.
      * <p>
      * Sends a command to operate the rollershutter.
      *
@@ -127,7 +143,7 @@ public class LxControlJalousie extends LxControl {
     }
 
     /**
-     * Stop movement of a rollershutter
+     * Stop movement of the rollershutter (jalousie)
      * <p>
      * Sends a command to operate the rollershutter.
      *
@@ -139,12 +155,11 @@ public class LxControlJalousie extends LxControl {
     }
 
     /**
-     * Get current position of the jalousie
+     * Get current position of the rollershutter (jalousie)
      *
      * @return
-     *         a floting point number fromr ange 0 - fully closed to 1 - fully open
+     *         a floating point number from range 0-fully closed to 1-fully open
      */
-
     public double getPosition() {
         LxControlState state = getState(LxControlJalousie.STATE_POSITION);
         if (state != null) {

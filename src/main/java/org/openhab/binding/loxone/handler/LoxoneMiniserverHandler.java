@@ -267,11 +267,8 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
                 channels.add(channel);
             }
         }
-
         builder.withChannels(channels);
-
         updateThing(builder.build());
-
     }
 
     @Override
