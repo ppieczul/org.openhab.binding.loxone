@@ -12,6 +12,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,12 +56,13 @@ public class LxServer {
     private final int port;
     private final String user, password;
     private String miniserverName, projectName, location, serial, cloudAddress;
+    @SuppressWarnings("unused")
     private String roomTitle, categoryTitle;
     private int firstConDelay = 1, connectErrDelay = 10, userErrorDelay = 60, comErrorDelay = 30;
 
     // Data structures
     private Set<LxUuid> uuids = new HashSet<LxUuid>();
-    private Map<LxUuid, LxControl> controls = new HashMap<LxUuid, LxControl>();;
+    private Map<LxUuid, LxControl> controls = new HashMap<LxUuid, LxControl>();
     private Map<LxUuid, LxContainer> rooms = new HashMap<LxUuid, LxContainer>();
     private Map<LxUuid, LxCategory> categories = new HashMap<LxUuid, LxCategory>();
     private Map<LxUuid, LxControlState> states = new HashMap<LxUuid, LxControlState>();
@@ -540,27 +542,24 @@ public class LxServer {
             }
         }
         // remove items that do not exist anymore in Miniserver
-        for (LxUuid id : rooms.keySet()) {
-            if (!id.getUpdate()) {
-                rooms.remove(id);
-                uuids.remove(id);
-            }
-        }
-        for (LxUuid id : categories.keySet()) {
-            if (!id.getUpdate()) {
-                categories.remove(id);
-                uuids.remove(id);
-            }
-        }
-        for (LxUuid id : controls.keySet()) {
-            if (!id.getUpdate()) {
-                controls.remove(id);
-                uuids.remove(id);
-            }
-        }
-        for (LxUuid id : states.keySet()) {
-            if (!id.getUpdate()) {
-                states.remove(id);
+        removeUnusedFromMap(rooms);
+        removeUnusedFromMap(categories);
+        removeUnusedFromMap(controls);
+        removeUnusedFromMap(states);
+    }
+
+    /**
+     * Removes all entries from a map, that do not have the 'updated' flag set on UUID key
+     *
+     * @param map
+     *            map to remove entries from
+     */
+    private <T> void removeUnusedFromMap(Map<LxUuid, T> map) {
+        for (Iterator<Map.Entry<LxUuid, T>> it = map.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<LxUuid, T> entry = it.next();
+            if (!entry.getKey().getUpdate()) {
+                uuids.remove(entry.getKey());
+                it.remove();
             }
         }
     }
@@ -787,57 +786,5 @@ public class LxServer {
             return "";
         }
         return name;
-    }
-
-    /**
-     * Logs all UUIDs recognized on the Miniserver (rooms, categories, controls).
-     */
-    public void traceUuids() {
-        logger.trace("*** (" + uuids.size() + ") UUIDS ***");
-        for (LxUuid i : uuids) {
-            logger.trace("Uuid: " + i.toString());
-        }
-    }
-
-    /**
-     * Logs all rooms recognized on the Miniserever
-     */
-    public void traceRooms() {
-        logger.trace("*** (" + rooms.size() + ") ROOMS (" + roomTitle + ") ***");
-        for (LxContainer r : rooms.values()) {
-            logger.trace(r.toString());
-        }
-    }
-
-    /**
-     * Logs all categories recognized on the Miniserver
-     */
-    public void traceCategories() {
-        logger.trace("*** (" + categories.size() + ") CATEGORIES (" + categoryTitle + ") ***");
-        for (LxContainer c : categories.values()) {
-            logger.trace(c.toString());
-        }
-    }
-
-    /**
-     * Logs all controls recognized on the Miniserver
-     */
-    public void traceControls() {
-        logger.trace("*** (" + controls.size() + ") CONTROLS ***");
-        for (LxControl c : controls.values()) {
-            logger.trace(c.toString());
-        }
-    }
-
-    /**
-     * Logs general Miniserver configuration
-     */
-    public void traceInfo() {
-        logger.trace("host       :" + host.toString());
-        logger.trace("port       :" + port);
-        logger.trace("Miniserver :" + miniserverName);
-        logger.trace("Project    :" + projectName);
-        logger.trace("Location   :" + location);
-        logger.trace("Serial     :" + serial);
     }
 }
