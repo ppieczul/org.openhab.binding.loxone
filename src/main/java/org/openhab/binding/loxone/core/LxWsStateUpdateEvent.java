@@ -19,6 +19,7 @@ import java.nio.ByteOrder;
  */
 class LxWsStateUpdateEvent {
     private LxUuid uuid;
+    @SuppressWarnings("unused")
     private LxUuid iconUuid = null;
     private double value = -1;
     private String text = null;
