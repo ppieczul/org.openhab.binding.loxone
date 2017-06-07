@@ -57,6 +57,8 @@ class LxJsonApp3 {
             LxJsonText text;
             String format;
             int movementScene;
+            String allOff;
+            Map<String, String> outputs;
         }
 
         String uuidAction;

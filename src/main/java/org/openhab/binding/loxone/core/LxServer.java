@@ -783,17 +783,24 @@ public class LxServer {
         } else if (LxControlJalousie.accepts(type)) {
             ctrl = new LxControlJalousie(socketClient, id, name, room, category, states);
 
-        } else if (LxControlInfoOnlyDigital.accepts(type)) {
-            ctrl = new LxControlInfoOnlyDigital(socketClient, id, name, room, category, states,
-                    jsonControl.details.text.on, jsonControl.details.text.off);
+        } else if (jsonControl.details != null) {
 
-        } else if (LxControlInfoOnlyAnalog.accepts(type)) {
-            ctrl = new LxControlInfoOnlyAnalog(socketClient, id, name, room, category, states,
-                    jsonControl.details.format);
+            if (LxControlInfoOnlyDigital.accepts(type) && jsonControl.details.text != null) {
+                ctrl = new LxControlInfoOnlyDigital(socketClient, id, name, room, category, states,
+                        jsonControl.details.text.on, jsonControl.details.text.off);
 
-        } else if (LxControlLightController.accepts(type)) {
-            ctrl = new LxControlLightController(socketClient, id, name, room, category, states,
-                    jsonControl.details.movementScene);
+            } else if (LxControlInfoOnlyAnalog.accepts(type)) {
+                ctrl = new LxControlInfoOnlyAnalog(socketClient, id, name, room, category, states,
+                        jsonControl.details.format);
+
+            } else if (LxControlLightController.accepts(type)) {
+                ctrl = new LxControlLightController(socketClient, id, name, room, category, states,
+                        jsonControl.details.movementScene);
+
+            } else if (LxControlRadio.accepts(type)) {
+                ctrl = new LxControlRadio(socketClient, id, name, room, category, states, jsonControl.details.outputs,
+                        jsonControl.details.allOff);
+            }
         }
 
         if (ctrl != null) {

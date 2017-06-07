@@ -9,8 +9,8 @@
 package org.openhab.binding.loxone.core;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * A Light Controller type of control on Loxone Miniserver.
@@ -57,7 +57,7 @@ public class LxControlLightController extends LxControl implements LxControlStat
     private static final String CMD_PREVIOUS_SCENE = "minus";
 
     public static final int NUM_OF_SCENES = 10;
-    private Map<String, String> sceneNames = new HashMap<String, String>();
+    private Map<String, String> sceneNames = new TreeMap<String, String>();
     private boolean newSceneNames = false;
 
     /**
