@@ -11,7 +11,7 @@
 
   <groupId>org.openhab.binding</groupId>
   <artifactId>org.openhab.binding.loxone</artifactId>
-  <version>2.1.0-8</version>
+  <version>2.1.0-9</version>
 
   <name>Loxone Binding</name>
   <packaging>eclipse-plugin</packaging>

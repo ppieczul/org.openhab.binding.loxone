@@ -55,6 +55,7 @@ public class LxControlLightController extends LxControl implements LxControlStat
      * Command string used to go to the previous scene
      */
     private static final String CMD_PREVIOUS_SCENE = "minus";
+    private static final int SCENE_ALL_ON = 9;
 
     public static final int NUM_OF_SCENES = 10;
     private Map<String, String> sceneNames = new TreeMap<String, String>();
@@ -150,7 +151,9 @@ public class LxControlLightController extends LxControl implements LxControlStat
      *             when something went wrong with communication
      */
     public void setScene(int scene) throws IOException {
-        if (scene >= 0 && scene < NUM_OF_SCENES) {
+        if (scene == SCENE_ALL_ON) {
+            allOn();
+        } else if (scene >= 0 && scene < NUM_OF_SCENES) {
             socketClient.sendAction(uuid, Long.toString(scene));
         }
     }

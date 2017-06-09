@@ -309,6 +309,9 @@ class LxWsClient {
                         state = ClientState.CLOSING;
                     }
                     socket.session.close(StatusCode.NORMAL, reason);
+                } else {
+                    logger.debug("[{}] Closing websocket, but no session, reason : {}", debugId, reason);
+                    state = ClientState.IDLE;
                 }
             }
         }
@@ -433,13 +436,6 @@ class LxWsClient {
         @OnWebSocketError
         public void onError(Throwable error) {
             logger.debug("[{}] Websocket error : {}", debugId, error.getMessage());
-            // in states in which websocket is connected, connection will be closed
-            // if error is not recoverable
-            if (state == ClientState.CONNECTING) {
-                notifyMaster(EventType.SERVER_OFFLINE, LxServer.OfflineReason.COMMUNICATION_ERROR,
-                        "Error when connecting to websocket : " + error.getMessage());
-                close(error.getMessage());
-            }
         }
 
         @OnWebSocketMessage
