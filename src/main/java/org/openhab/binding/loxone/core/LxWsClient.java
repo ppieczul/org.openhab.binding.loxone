@@ -354,7 +354,7 @@ class LxWsClient {
      *             when server returns data which are not understood
      */
     void sendAction(LxUuid id, String operation) throws IOException {
-        String command = CMD_ACTION + id.toString() + "/" + operation;
+        String command = CMD_ACTION + id.getOriginalString() + "/" + operation;
         logger.debug("[{}] Sending command {}", debugId, command);
         socket.sendString(command);
     }

@@ -22,6 +22,7 @@ import java.nio.ByteOrder;
  */
 public class LxUuid {
     private String uuid;
+    private String uuidOriginal;
     private boolean updated;
 
     /**
@@ -31,17 +32,22 @@ public class LxUuid {
      *            identifier retrieved from Loxone Miniserver
      */
     public LxUuid(String uuid) {
-        this.uuid = uuid;
-        updated = true;
+        init(uuid);
     }
 
     public LxUuid(byte data[], int offset) {
-        uuid = String.format("%08x-%04x-%04x-%02x%02x%02x%02x%02x%02x%02x%02x",
+        String id = String.format("%08x-%04x-%04x-%02x%02x%02x%02x%02x%02x%02x%02x",
                 ByteBuffer.wrap(data, offset, 4).order(ByteOrder.LITTLE_ENDIAN).getInt(),
                 ByteBuffer.wrap(data, offset + 4, 2).order(ByteOrder.LITTLE_ENDIAN).getShort(),
                 ByteBuffer.wrap(data, offset + 6, 2).order(ByteOrder.LITTLE_ENDIAN).getShort(), data[offset + 8],
                 data[offset + 9], data[offset + 10], data[offset + 11], data[offset + 12], data[offset + 13],
                 data[offset + 14], data[offset + 15]);
+        init(id);
+    }
+
+    private void init(String uuid) {
+        uuidOriginal = uuid;
+        this.uuid = uuidOriginal.replaceAll("[^a-zA-Z0-9-]", "-").toUpperCase();
         updated = true;
     }
 
@@ -68,6 +74,17 @@ public class LxUuid {
     @Override
     public String toString() {
         return uuid;
+    }
+
+    /**
+     * Returns an original string that was used to create UUID.
+     *
+     * @return
+     *         original string for the UUID
+     */
+
+    public String getOriginalString() {
+        return uuidOriginal;
     }
 
     /**

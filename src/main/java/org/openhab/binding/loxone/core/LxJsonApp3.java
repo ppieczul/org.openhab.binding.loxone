@@ -68,5 +68,6 @@ class LxJsonApp3 {
         String cat;
         LxJsonDetails details;
         Map<String, JsonElement> states;
+        Map<String, LxJsonControl> subControls;
     }
 }
