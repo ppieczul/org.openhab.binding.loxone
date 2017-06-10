@@ -17,6 +17,7 @@ import java.net.UnknownHostException;
 import java.nio.channels.Channels;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -255,6 +256,13 @@ public class LoxoneMiniserverHandler extends BaseThingHandler implements LxServe
                 builder.withoutChannel(channel.getUID());
             }
         }
+
+        channels.sort(new Comparator<Channel>() {
+            @Override
+            public int compare(Channel c1, Channel c2) {
+                return c1.getLabel().compareTo(c2.getLabel());
+            }
+        });
 
         builder.withChannels(channels);
         updateThing(builder.build());
