@@ -241,6 +241,8 @@ public abstract class LxControl {
 
         } else if (LxControlJalousie.accepts(type)) {
             ctrl = new LxControlJalousie(client, id, json, room, category);
+        } else if (LxControlTextState.accepts(type)) {
+            ctrl = new LxControlTextState(client, id, json, room, category);
 
         } else if (json.details != null) {
 
