@@ -85,4 +85,18 @@ public class LxControlInfoOnlyAnalog extends LxControl {
         }
         return null;
     }
+
+    /**
+     * Obtain current value of an analog virtual state, expressed as a number
+     *
+     * @return
+     *         value of the state or zero if current value is not compatible with this control
+     */
+    public double getValue() {
+        LxControlState state = getState(STATE_VALUE);
+        if (state != null) {
+            return state.getValue();
+        }
+        return 0;
+    }
 }
