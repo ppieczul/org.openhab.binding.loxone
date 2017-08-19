@@ -6,22 +6,22 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.loxone.core;
+package org.openhab.binding.loxone.internal.core;
 
-import org.openhab.binding.loxone.core.LxWsClient.LxWebSocket;
+import org.openhab.binding.loxone.internal.core.LxWsClient.LxWebSocket;
 
 /**
  * Event used to communicate between websocket client ({@link LxWebSocket}) and object representing a Miniserver
  * ({@link LxServer})
  *
- * @author Pawel Pieczul - initial commit
+ * @author Pawel Pieczul - initial contribution
  *
  */
 class LxServerEvent {
     /**
      * Type of {@link LxServerEvent} event
      *
-     * @author Pawel Pieczul - initial commit
+     * @author Pawel Pieczul - initial contribution
      *
      */
     public enum EventType {

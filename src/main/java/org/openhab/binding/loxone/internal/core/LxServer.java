@@ -6,7 +6,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.loxone.core;
+package org.openhab.binding.loxone.internal.core;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.openhab.binding.loxone.core.LxServerEvent.EventType;
+import org.openhab.binding.loxone.internal.core.LxServerEvent.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * If server is not needed anymore, a {@link #stop()} method should be called to close open connections and stop
  * processing thread.
  *
- * @author Pawel Pieczul - initial commit
+ * @author Pawel Pieczul - initial contribution
  *
  */
 public class LxServer {
@@ -333,7 +333,7 @@ public class LxServer {
      * when it receives close command from supervisor ({@link LxServer} or when Miniserver locks out user due to too
      * many unsuccessful login attempts.
      *
-     * @author Pawel Pieczul - initial commit
+     * @author Pawel Pieczul - initial contribution
      *
      */
     private class LxServerThread extends Thread {

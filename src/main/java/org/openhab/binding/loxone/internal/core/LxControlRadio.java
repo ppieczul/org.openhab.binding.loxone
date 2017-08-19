@@ -7,18 +7,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.openhab.binding.loxone.core;
+package org.openhab.binding.loxone.internal.core;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.openhab.binding.loxone.core.LxJsonApp3.LxJsonControl;
+import org.openhab.binding.loxone.internal.core.LxJsonApp3.LxJsonControl;
 
 /**
  * A radio-button type of control on Loxone Miniserver.
  *
- * @author Pawel Pieczul - initial commit
+ * @author Pawel Pieczul - initial contribution
  *
  */
 public class LxControlRadio extends LxControl {

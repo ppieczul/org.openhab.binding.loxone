@@ -6,12 +6,12 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.loxone.core;
+package org.openhab.binding.loxone.internal.core;
 
 /**
  * This is an interface to listen to control's state changes
  *
- * @author Pawel Pieczul - initial commit
+ * @author Pawel Pieczul - initial contribution
  *
  */
 interface LxControlStateListener {

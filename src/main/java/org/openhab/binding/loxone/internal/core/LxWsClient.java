@@ -6,7 +6,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.loxone.core;
+package org.openhab.binding.loxone.internal.core;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -36,8 +36,8 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.eclipse.smarthome.core.common.ThreadPoolManager;
-import org.openhab.binding.loxone.core.LxJsonResponse.LxJsonSubResponse;
-import org.openhab.binding.loxone.core.LxServerEvent.EventType;
+import org.openhab.binding.loxone.internal.core.LxJsonResponse.LxJsonSubResponse;
+import org.openhab.binding.loxone.internal.core.LxServerEvent.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,7 @@ import com.google.gson.JsonSyntaxException;
  * This client is implemented as a state machine, according to guidelines in Loxone API documentation.
  * It uses jetty websocket client and creates one own thread to send keep-alive messages to the Miniserver.
  *
- * @author Pawel Pieczul - initial commit
+ * @author Pawel Pieczul - initial contribution
  *
  */
 class LxWsClient {
@@ -84,7 +84,7 @@ class LxWsClient {
     /**
      * Internal state of the websocket client.
      *
-     * @author Pawel Pieczul - initial commit
+     * @author Pawel Pieczul - initial contribution
      *
      */
     private enum ClientState {
@@ -157,7 +157,7 @@ class LxWsClient {
     /**
      * A header of a binary message received from Loxone Miniserver on a websocket connection.
      *
-     * @author Pawel Pieczul - initial commit
+     * @author Pawel Pieczul - initial contribution
      *
      */
     private class LxWsBinaryHeader {
@@ -478,7 +478,7 @@ class LxWsClient {
     /**
      * Implementation of jetty websocket client
      *
-     * @author Pawel Pieczul - initial commit
+     * @author Pawel Pieczul - initial contribution
      *
      */
     @WebSocket

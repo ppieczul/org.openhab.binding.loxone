@@ -6,16 +6,16 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.loxone.core;
+package org.openhab.binding.loxone.internal.core;
 
-import org.openhab.binding.loxone.core.LxJsonApp3.LxJsonControl;
+import org.openhab.binding.loxone.internal.core.LxJsonApp3.LxJsonControl;
 
 /**
  * A Text State type of control on Loxone Miniserver.
  * <p>
  * According to Loxone API documentation, a text state represents a State functional block on the Miniserver
  *
- * @author Pawel Pieczul - initial commit
+ * @author Pawel Pieczul - initial contribution
  *
  */
 public class LxControlTextState extends LxControl {

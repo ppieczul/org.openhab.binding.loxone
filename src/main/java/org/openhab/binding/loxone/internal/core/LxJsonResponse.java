@@ -6,7 +6,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.openhab.binding.loxone.core;
+package org.openhab.binding.loxone.internal.core;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -16,7 +16,7 @@ import com.google.gson.annotations.SerializedName;
  * <p>
  * This structure is used for parsing with Gson library.
  *
- * @author Pawel Pieczul - initial commit
+ * @author Pawel Pieczul - initial contribution
  *
  */
 class LxJsonResponse {
